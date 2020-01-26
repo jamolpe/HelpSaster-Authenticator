@@ -41,5 +41,5 @@ jobs:
           name: build
 
       - name: test-user-service
-        run: go test ./test/...
+        run: go test ./...
         working-directory: ./
