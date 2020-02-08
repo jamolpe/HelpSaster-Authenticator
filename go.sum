@@ -1,3 +1,5 @@
+github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/jamolpe/go-logger v0.0.0-20200112204822-80b863b6079c h1:CdTdw/k/jkLtH5VREYh4nnZyzNhdD319lf3nfHQVW9c=
 github.com/jamolpe/go-logger v0.0.0-20200126172048-a8af21be14ce h1:4hwRmTXN2Yrpqx4pakZom8pmqq1Nw/lM27L77desazI=
 github.com/jamolpe/go-logger v0.0.0-20200126172048-a8af21be14ce/go.mod h1:8AZEj/gsaH64qR82SSnzYMZ/UQGTPbqQBG4mm6c3UM8=
