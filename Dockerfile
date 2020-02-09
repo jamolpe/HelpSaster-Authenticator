@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o authorization-service.
+RUN go build -o authorization-service ./cmd/...
 
 EXPOSE 8080
 
