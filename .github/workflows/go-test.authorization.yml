@@ -22,7 +22,7 @@ jobs:
         working-directory: ./
 
       - name: Build
-        run: go build -v .
+        run: go build ./cmd/...
         working-directory: ./
 
       - name: Upload build

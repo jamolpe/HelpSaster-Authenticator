@@ -1,7 +1,7 @@
 package core
 
 import (
-	auth "authorization-service/internal/authorization"
+	auth "authorization-service/internal/core/authorization"
 	"authorization-service/pkg/models"
 	"errors"
 
