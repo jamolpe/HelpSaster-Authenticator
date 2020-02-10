@@ -1,4 +1,4 @@
-package test
+package coretest
 
 import (
 	"authorization-service/internal/core"
