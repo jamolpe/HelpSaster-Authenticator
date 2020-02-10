@@ -11,7 +11,7 @@ jobs:
       - name: Set up Go 1.13
         uses: actions/setup-go@v1
         with:
-          go-version: 1.12
+          go-version: 1.13
         id: go
 
       - name: Check out code into the Go module directory
@@ -35,10 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Set up Go 1.12
+      - name: Set up Go 1.13
         uses: actions/setup-go@v1
         with:
-          go-version: 1.12
+          go-version: 1.13
         id: go
 
       - name: Download build
@@ -46,6 +46,9 @@ jobs:
         with:
           name: build
 
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
       - name: test-user-service
-        run: go test ./...
+        run: go test ./test/...
         working-directory: ./
