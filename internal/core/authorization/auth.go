@@ -23,8 +23,8 @@ func createUserToken(email string) (string, error) {
 }
 
 // Authorization : check if the user is authoriced
-func Authorization(authUser *models.User, requestedUser models.LoginUser) (*models.SessionUser, error) {
-	logerUser := &models.SessionUser{}
+func Authorization(authUser *models.User, requestedUser *models.User) (*models.AuthUser, error) {
+	logerUser := &models.AuthUser{}
 	if authUser.Password == requestedUser.Password {
 		token, err := createUserToken(authUser.Email)
 		logerUser.User = authUser

@@ -7,7 +7,7 @@ import (
 )
 
 func Test_Authenticate_NotExistingUser(t *testing.T) {
-	loginUser := models.LoginUser{Email: "user@user.com", Password: "password"}
+	loginUser := &models.User{Email: "user@user.com", Password: "password"}
 	repo := NewRepository(nil, models.User{}, nil)
 	srv := core.NewUserService(repo)
 

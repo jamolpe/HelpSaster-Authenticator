@@ -6,6 +6,14 @@ type (
 		Email    string
 		Password string
 	}
+	// RegisterUser : register model
+	RegisterUser struct {
+		Email    string
+		Password string
+		Name     string
+		LastName string
+		Age      uint8
+	}
 	// User : user model
 	User struct {
 		Email, Name string
@@ -13,8 +21,8 @@ type (
 		Age         uint8
 	}
 
-	// SessionUser : user info session
-	SessionUser struct {
+	// AuthUser : user info session
+	AuthUser struct {
 		Logged bool
 		User   *User
 		Token  string

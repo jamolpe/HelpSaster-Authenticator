@@ -11,7 +11,7 @@ import (
 // AuthServiceInterface : authentication core service
 type AuthServiceInterface interface {
 	UserRegister(user *models.User) (bool, error)
-	Authenticate(loginUserData models.LoginUser) (bool, *models.SessionUser, error)
+	Authenticate(loginUserData *models.User) (bool, *models.AuthUser, error)
 }
 
 type authSrv struct {
@@ -39,7 +39,7 @@ func (s *authSrv) UserRegister(user *models.User) (bool, error) {
 }
 
 // Authenticate : authenticate the user and give a token
-func (s *authSrv) Authenticate(loginUser models.LoginUser) (bool, *models.SessionUser, error) {
+func (s *authSrv) Authenticate(loginUser *models.User) (bool, *models.AuthUser, error) {
 	user := &models.User{Email: loginUser.Email}
 	dbUser := s.getUserFromDatabase(*user)
 	if *dbUser == (models.User{}) {
@@ -51,7 +51,7 @@ func (s *authSrv) Authenticate(loginUser models.LoginUser) (bool, *models.Sessio
 		gologger.ERROR("Authenticate: " + err.Error())
 		return false, nil, err
 	}
-	if *sessionUser == (models.SessionUser{}) {
+	if *sessionUser == (models.AuthUser{}) {
 		gologger.DEBUG("Authenticate: wrong password")
 		return false, sessionUser, nil
 	}
