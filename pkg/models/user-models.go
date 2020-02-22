@@ -23,8 +23,8 @@ type (
 
 	// AuthUser : user info session
 	AuthUser struct {
-		Logged bool
-		User   *User
-		Token  string
+		Logged bool   `json:"Logged"`
+		User   *User  `json:"User"`
+		Token  string `json:"Token"`
 	}
 )

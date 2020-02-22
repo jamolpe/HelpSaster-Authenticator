@@ -32,7 +32,9 @@ func (api *API) Authenticate(c echo.Context) error {
 		}
 		user := mapLoginUserToModel(userToLogin)
 		authenticated, authUser, err := api.authSrv.Authenticate(user)
-		if err == nil && authenticated {
+		sessionCookie, cookieerr := createCookie(*authUser)
+		if err == nil && authenticated && cookieerr == nil {
+			c.SetCookie(sessionCookie)
 			return c.JSON(200, models.Authresponse{Message: "user authorized", LogedUser: *authUser})
 		}
 	}
