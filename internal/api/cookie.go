@@ -14,8 +14,8 @@ func createCookie(userInfo models.AuthUser) (*http.Cookie, error) {
 	if err != nil {
 		return nil, err
 	}
-	cookie.Domain = "HelpSaster"
+	cookie.Domain = "localhost"
 	cookie.Value = b64.StdEncoding.EncodeToString(userSessionInfo)
-	cookie.Secure = true
+	cookie.Secure = false
 	return cookie, nil
 }

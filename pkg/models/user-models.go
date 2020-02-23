@@ -21,7 +21,7 @@ type (
 		Age         uint8
 	}
 
-	// AuthUser : user info session
+	// AuthUser : user info login response
 	AuthUser struct {
 		Logged bool   `json:"Logged"`
 		User   *User  `json:"User"`

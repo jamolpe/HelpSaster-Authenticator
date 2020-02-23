@@ -25,4 +25,5 @@ func (api *API) defineAuthRouter(e *echo.Echo) {
 	userGroup := e.Group("/users")
 	userGroup.POST("/register", api.Register)
 	userGroup.POST("/authenticate", api.Authenticate)
+	userGroup.POST("/check-auth", api.CheckValidSession)
 }

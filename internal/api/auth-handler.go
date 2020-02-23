@@ -2,6 +2,7 @@ package api
 
 import (
 	"authorization-service/pkg/models"
+	"fmt"
 
 	"github.com/labstack/echo"
 )
@@ -33,10 +34,22 @@ func (api *API) Authenticate(c echo.Context) error {
 		user := mapLoginUserToModel(userToLogin)
 		authenticated, authUser, err := api.authSrv.Authenticate(user)
 		sessionCookie, cookieerr := createCookie(*authUser)
+		go api.authSrv.SetSession(authUser)
 		if err == nil && authenticated && cookieerr == nil {
 			c.SetCookie(sessionCookie)
 			return c.JSON(200, models.Authresponse{Message: "user authorized", LogedUser: *authUser})
 		}
 	}
-	return c.JSON(500, models.ErrorResponse{Code: 004, Message: "user not logged due an api error"})
+	return c.JSON(500, models.ErrorResponse{Code: 004, Message: "user not logged due api error"})
+}
+
+// CheckValidSession : we check if the session is valid
+func (api *API) CheckValidSession(c echo.Context) error {
+	cookie, err := c.Cookie("HelpSasterAuth")
+	if err == nil {
+		c.JSON(500, models.ErrorResponse{Code: 005, Message: "cookie not found need to relogin"})
+	}
+	fmt.Println(cookie.Name)
+	fmt.Println(cookie.Value)
+	return c.JSON(500, models.ErrorResponse{Code: 006, Message: "session could not be checked due api error"})
 }

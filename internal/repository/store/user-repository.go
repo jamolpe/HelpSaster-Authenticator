@@ -1,7 +1,6 @@
 package store
 
 import (
-	"authorization-service/internal/core"
 	"authorization-service/pkg/models"
 	"context"
 	"errors"
@@ -12,17 +11,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// NewStore : create the new repository
-func NewStore(client *mongo.Client) core.UserRepository {
-	database := client.Database("Clients")
+func createUserCollection(database *mongo.Database) *mongo.Collection {
 	userCollection := database.Collection("Users")
-	return &repository{client, database, userCollection}
-}
-
-type repository struct {
-	client         *mongo.Client
-	database       *mongo.Database
-	userCollection *mongo.Collection
+	return userCollection
 }
 
 func (r repository) SaveUser(user models.User) error {
