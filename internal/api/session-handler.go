@@ -10,7 +10,7 @@ import (
 // CheckValidSession : we check if the session is valid
 func (api *API) CheckValidSession(c echo.Context) error {
 	cookie, err := c.Cookie("HelpSasterAuth")
-	if err == nil {
+	if err != nil {
 		c.JSON(500, models.ErrorResponse{Code: 005, Message: "cookie not found need to relogin"})
 	}
 	fmt.Println(cookie.Name)

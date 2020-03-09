@@ -21,8 +21,8 @@ type authSrv struct {
 	repo Repository
 }
 
-// NewUserService : creates a new core with repository injected
-func NewUserService(repo Repository) AuthServiceInterface {
+// New : creates a new core with repository injected
+func New(repo Repository) AuthServiceInterface {
 	return &authSrv{repo}
 }
 
