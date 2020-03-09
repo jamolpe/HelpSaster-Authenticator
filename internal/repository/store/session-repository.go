@@ -4,6 +4,7 @@ import (
 	"authorization-service/pkg/models"
 	"context"
 	"errors"
+	"strings"
 
 	gologger "github.com/jamolpe/go-logger"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,8 +19,9 @@ func createSessionCollection(database *mongo.Database) *mongo.Collection {
 		Options: options.Index().SetExpireAfterSeconds(1800),
 	},
 	)
-	if err != nil {
-		panic(err)
+	errorMsg := err.Error()
+	if err != nil && !(strings.Contains(errorMsg, "IndexOptionsConflict")) {
+		panic(errorMsg)
 	}
 	return sessionCollection
 }
