@@ -2,6 +2,7 @@ package core
 
 import (
 	auth "authorization-service/internal/core/authorization"
+	mgerror "authorization-service/pkg/errors"
 	"authorization-service/pkg/models"
 	"errors"
 
@@ -12,14 +13,16 @@ import (
 type AuthServiceInterface interface {
 	UserRegister(user *models.User) (bool, error)
 	Authenticate(loginUserData *models.User) (bool, *models.AuthUser, error)
+	GetSession(userID string) (*models.Session, error)
+	SetSession(authUser *models.AuthUser) error
 }
 
 type authSrv struct {
-	repo UserRepository
+	repo Repository
 }
 
-// NewUserService : creates a new core with repository injected
-func NewUserService(repo UserRepository) AuthServiceInterface {
+// New : creates a new core with repository injected
+func New(repo Repository) AuthServiceInterface {
 	return &authSrv{repo}
 }
 
@@ -57,4 +60,23 @@ func (s *authSrv) Authenticate(loginUser *models.User) (bool, *models.AuthUser, 
 	}
 	gologger.INFO("Authenticate: user authentified " + loginUser.Email)
 	return true, sessionUser, nil
+}
+
+func (s *authSrv) GetSession(userID string) (*models.Session, error) {
+	session, err := s.repo.GetSessionByUserID(userID)
+	if err != nil {
+		gologger.ERROR("GetSession: error getting the session")
+		return nil, mgerror.NewError("error getting the data from database")
+	}
+	return session, nil
+}
+
+func (s *authSrv) SetSession(authUser *models.AuthUser) error {
+	session := mapSessionFromAuthUser(authUser)
+	err := s.repo.SaveSession(*session)
+	if err != nil {
+		gologger.ERROR("SetSession: error setting the session on DB")
+		return mgerror.NewError("error setting the session on the database")
+	}
+	return nil
 }

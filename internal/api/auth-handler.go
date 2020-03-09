@@ -33,10 +33,11 @@ func (api *API) Authenticate(c echo.Context) error {
 		user := mapLoginUserToModel(userToLogin)
 		authenticated, authUser, err := api.authSrv.Authenticate(user)
 		sessionCookie, cookieerr := createCookie(*authUser)
+		go api.authSrv.SetSession(authUser)
 		if err == nil && authenticated && cookieerr == nil {
 			c.SetCookie(sessionCookie)
 			return c.JSON(200, models.Authresponse{Message: "user authorized", LogedUser: *authUser})
 		}
 	}
-	return c.JSON(500, models.ErrorResponse{Code: 004, Message: "user not logged due an api error"})
+	return c.JSON(500, models.ErrorResponse{Code: 004, Message: "user not logged due api error"})
 }

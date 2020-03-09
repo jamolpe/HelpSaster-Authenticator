@@ -9,8 +9,8 @@ import (
 
 func main() {
 	client := database.ConfigureAndConnect()
-	repo := store.NewStore(client)
-	srv := core.NewUserService(repo)
+	repo := store.New(client)
+	srv := core.New(repo)
 	handler := api.New(srv)
 	handler.Router()
 }
