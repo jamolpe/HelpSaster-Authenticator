@@ -10,7 +10,7 @@ import (
 func main() {
 	client := database.ConfigureAndConnect()
 	repo := store.New(client)
-	srv := core.New(repo)
-	handler := api.New(srv)
+	corsrv := core.New(repo)
+	handler := api.New(corsrv)
 	handler.Router()
 }
