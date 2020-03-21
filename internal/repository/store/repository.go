@@ -6,8 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// NewStore : create the new repository
-func NewStore(client *mongo.Client) core.Repository {
+// New : create the new repository
+func New(client *mongo.Client) core.Repository {
 	database := client.Database("Clients")
 	userCollection := createUserCollection(database)
 	sessionCollection := createSessionCollection(database)

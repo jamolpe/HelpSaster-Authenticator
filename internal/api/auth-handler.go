@@ -33,7 +33,7 @@ func (api *API) Authenticate(c echo.Context) error {
 		user := mapLoginUserToModel(userToLogin)
 		authenticated, authUser, err := api.authSrv.Authenticate(user)
 		sessionCookie, cookieerr := createCookie(*authUser)
-		go api.authSrv.SetSession(authUser)
+		go api.sessionSrv.SetSession(authUser)
 		if err == nil && authenticated && cookieerr == nil {
 			c.SetCookie(sessionCookie)
 			return c.JSON(200, models.Authresponse{Message: "user authorized", LogedUser: *authUser})

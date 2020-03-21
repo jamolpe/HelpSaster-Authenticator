@@ -10,6 +10,7 @@ func (api *API) Router() {
 	e := echo.New()
 	defineConfiguration(e)
 	api.defineAuthRouter(e)
+	api.defineSessionRoutes(e)
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -25,5 +26,9 @@ func (api *API) defineAuthRouter(e *echo.Echo) {
 	userGroup := e.Group("/users")
 	userGroup.POST("/register", api.Register)
 	userGroup.POST("/authenticate", api.Authenticate)
-	userGroup.POST("/check-auth", api.CheckValidSession)
+}
+
+func (api *API) defineSessionRoutes(e *echo.Echo) {
+	userGroup := e.Group("/session")
+	userGroup.Post("/check-auth", api.CheckValidSession)
 }
