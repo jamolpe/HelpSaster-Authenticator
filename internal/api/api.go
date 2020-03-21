@@ -2,7 +2,7 @@ package api
 
 import (
 	authorizationcore "authorization-service/internal/core/authorization-core"
-	sessioncore "authorization-service/internal/core/session-core"
+	sessioncore "authorization-service/internal/core/session-core/sessioncore"
 )
 
 // New : define a new api

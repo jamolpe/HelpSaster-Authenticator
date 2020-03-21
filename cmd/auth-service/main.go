@@ -2,15 +2,17 @@ package main
 
 import (
 	"authorization-service/internal/api"
-	"authorization-service/internal/core"
+	authorizationcore "authorization-service/internal/authorization-core"
 	"authorization-service/internal/repository/database"
 	"authorization-service/internal/repository/store"
+	sessioncore "authorization-service/internal/session-core"
 )
 
 func main() {
 	client := database.ConfigureAndConnect()
 	repo := store.New(client)
-	corsrv := core.New(repo)
-	handler := api.New(corsrv)
+	authsrv := authorizationcore.New(repo)
+	sessionsrv := sessioncore.New(repo)
+	handler := api.New(authsrv, sessionsrv)
 	handler.Router()
 }
