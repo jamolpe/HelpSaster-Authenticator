@@ -2,24 +2,66 @@ package auth
 
 import (
 	mgerror "authorization-service/pkg/errors"
-	"authorization-service/pkg/models"
 	"time"
+
+	gologger "github.com/jamolpe/go-logger"
+
+	"authorization-service/pkg/models"
+	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
+type (
+	// ValidationResult validation specification result
+	ValidationResult struct {
+		IsValid bool
+		Expired bool
+		Error   bool
+	}
+)
+
 func createUserToken(email string) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = email
-	claims["admin"] = false
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
-	t, err := token.SignedString([]byte("mytopSecret"))
+	mySigningKey := []byte("mytopSecret")
+
+	createdAtInt := int64(time.Second)
+	// Create the Claims
+	claims := &jwt.StandardClaims{
+		ExpiresAt: 15000,
+		Subject:   email,
+		Issuer:    "gosessioner",
+		IssuedAt:  createdAtInt,
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	ss, err := token.SignedString(mySigningKey)
 	if err != nil {
 		return "", mgerror.NewError("authorization error")
 	}
-	return t, nil
+	return ss, nil
+}
+
+// CheckTokenIsValid checks if the token is valid
+func CheckTokenIsValid(tokenString string) ValidationResult {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte("mytopSecret"), nil
+	})
+
+	if token.Valid {
+		return ValidationResult{IsValid: true, Expired: false, Error: false}
+	} else if ve, ok := err.(*jwt.ValidationError); ok {
+		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
+			fmt.Println("That's not even a token")
+			return ValidationResult{IsValid: false, Expired: false, Error: true}
+		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
+			gologger.ERROR("TokenValidation: token expired")
+			return ValidationResult{IsValid: false, Expired: true, Error: false}
+		} else {
+			gologger.ERROR("TokenValidation: couldn't handle this token:" + err.Error())
+			return ValidationResult{IsValid: false, Expired: false, Error: true}
+		}
+	}
+	return ValidationResult{IsValid: false, Expired: false, Error: true}
 }
 
 // Authorization : check if the user is authoriced

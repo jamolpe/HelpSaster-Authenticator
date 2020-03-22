@@ -1,7 +1,7 @@
 package coretest
 
 import (
-	"authorization-service/internal/core"
+	authorizationcore "authorization-service/internal/authorization-core"
 	"authorization-service/pkg/models"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 func Test_Authenticate_NotExistingUser(t *testing.T) {
 	loginUser := &models.User{Email: "user@user.com", Password: "password"}
 	repo := NewRepository(nil, models.User{}, nil)
-	srv := core.NewUserService(repo)
+	srv := authorizationcore.New(repo)
 
 	result, session, err := srv.Authenticate(loginUser)
 	if result != false {

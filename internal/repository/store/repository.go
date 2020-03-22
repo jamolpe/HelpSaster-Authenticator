@@ -1,13 +1,22 @@
 package store
 
 import (
-	"authorization-service/internal/core"
+	authorizationcore "authorization-service/internal/authorization-core"
+	sessioncore "authorization-service/internal/session-core"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type (
+	// Repository definition
+	Repository interface {
+		authorizationcore.UserRepository
+		sessioncore.SessionRepository
+	}
+)
+
 // New : create the new repository
-func New(client *mongo.Client) core.Repository {
+func New(client *mongo.Client) Repository {
 	database := client.Database("Clients")
 	userCollection := createUserCollection(database)
 	sessionCollection := createSessionCollection(database)

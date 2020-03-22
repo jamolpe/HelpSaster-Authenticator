@@ -29,6 +29,6 @@ func (api *API) defineAuthRouter(e *echo.Echo) {
 }
 
 func (api *API) defineSessionRoutes(e *echo.Echo) {
-	userGroup := e.Group("/session")
-	userGroup.Post("/check-auth", api.CheckValidSession)
+	sessionGroup := e.Group("/session")
+	sessionGroup.POST("/check-auth", api.CheckValidSession)
 }

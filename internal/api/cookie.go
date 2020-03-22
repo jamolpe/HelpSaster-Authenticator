@@ -9,7 +9,7 @@ import (
 
 func createCookie(userInfo models.AuthUser) (*http.Cookie, error) {
 	cookie := new(http.Cookie)
-	cookie.Name = "HelpSasterAuth"
+	cookie.Name = "help_saster"
 	var userSessionInfo, err = json.Marshal(userInfo)
 	if err != nil {
 		return nil, err
