@@ -30,6 +30,7 @@ func (s *authService) UserRegister(user *models.User) (bool, error) {
 		gologger.INFO("Register: user already exist")
 		return false, errors.New("user already exist")
 	}
+	user.Password, _ = auth.SecureString(user.Password)
 	err := s.repo.SaveUser(*user)
 	if err != nil {
 		gologger.ERROR(`save new user error`)

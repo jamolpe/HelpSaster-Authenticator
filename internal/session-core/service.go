@@ -35,8 +35,16 @@ func (s *sessionService) GetSession(userID string) (*models.Session, error) {
 	return session, nil
 }
 
+func (s *sessionService) modifyWithExistingSession(session *models.Session) {
+	existingSession, _ := s.GetSession(session.UserID)
+	if existingSession != nil {
+		session = existingSession
+	}
+}
+
 func (s *sessionService) SetSession(authUser *models.AuthUser) error {
 	session := mapSessionFromAuthUser(authUser)
+	s.modifyWithExistingSession(session)
 	err := s.repo.SaveSession(*session)
 	if err != nil {
 		gologger.ERROR("SetSession: error setting the session on DB")

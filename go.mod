@@ -8,5 +8,5 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.0
-	golang.org/x/crypto v0.0.0-20200208060501-ecb85df21340 // indirect
+	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
 )

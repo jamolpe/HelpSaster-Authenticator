@@ -5,6 +5,7 @@ import (
 	"time"
 
 	gologger "github.com/jamolpe/go-logger"
+	"golang.org/x/crypto/bcrypt"
 
 	"authorization-service/pkg/models"
 	"fmt"
@@ -64,12 +65,24 @@ func CheckTokenIsValid(tokenString string) ValidationResult {
 	return ValidationResult{IsValid: false, Expired: false, Error: true}
 }
 
+// SecureString : Secure the password using hash
+func SecureString(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+// CheckCorrespondingString : check if the plain password correspond with the hash
+func CheckCorrespondingString(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
 // Authorization : check if the user is authoriced
-func Authorization(authUser *models.User, requestedUser *models.User) (*models.AuthUser, error) {
+func Authorization(dbUser *models.User, requestedUser *models.User) (*models.AuthUser, error) {
 	logerUser := &models.AuthUser{}
-	if authUser.Password == requestedUser.Password {
-		token, err := createUserToken(authUser.Email)
-		logerUser.User = authUser
+	if CheckCorrespondingString(requestedUser.Password, dbUser.Password) {
+		token, err := createUserToken(dbUser.Email)
+		logerUser.User = dbUser
 		logerUser.Logged = true
 		logerUser.Token = token
 		return logerUser, err
