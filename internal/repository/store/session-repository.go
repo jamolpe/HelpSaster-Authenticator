@@ -19,9 +19,8 @@ func createSessionCollection(database *mongo.Database) *mongo.Collection {
 		Options: options.Index().SetExpireAfterSeconds(1800),
 	},
 	)
-	errorMsg := err.Error()
-	if err != nil && !(strings.Contains(errorMsg, "IndexOptionsConflict")) {
-		panic(errorMsg)
+	if err != nil && !(strings.Contains(err.Error(), "IndexOptionsConflict")) {
+		panic(err.Error())
 	}
 	return sessionCollection
 }
@@ -38,7 +37,7 @@ func (r *repository) SaveSession(session models.Session) error {
 
 func (r *repository) GetSessionByUserID(UserID string) (*models.Session, error) {
 	var dbsession = new(models.Session)
-	filter := bson.D{{"UserID", UserID}}
+	filter := bson.D{{"userid", UserID}}
 	err := r.sessionCollection.FindOne(context.TODO(), filter).Decode(&dbsession)
 	if err != nil {
 		gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
