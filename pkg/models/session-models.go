@@ -8,9 +8,9 @@ type (
 	// Session : the session object
 	Session struct {
 		ID        string
-		User      *User     `json:"User"`
-		Token     string    `json:"Token"`
-		UserID    string    `json:"UserID"`
-		CreatedAt time.Time `json:"CreatedAt"`
+		User      *User     `json:"User" bson:"user"`
+		Token     string    `json:"Token" bson:"token"`
+		UserID    string    `json:"UserID" bson:"userid"`
+		CreatedAt time.Time `json:"CreatedAt" bson:"createdat"`
 	}
 )

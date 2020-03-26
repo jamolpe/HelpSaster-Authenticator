@@ -16,9 +16,10 @@ type (
 	}
 	// User : user model
 	User struct {
-		Email, Name string
-		Password    string `json:"-"`
-		Age         uint8
+		Email    string `bson:"email"`
+		Name     string `bson:"name"`
+		Password string `json:"-" bson:"password"`
+		Age      uint8  `bson:"age"`
 	}
 
 	// AuthUser : user info login response

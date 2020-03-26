@@ -8,17 +8,29 @@ import (
 
 	gologger "github.com/jamolpe/go-logger"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func createSessionCollection(database *mongo.Database) *mongo.Collection {
 	sessionCollection := database.Collection("Session")
-	_, err := sessionCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{
-		Keys:    bson.D{{"createdat", 1}},
-		Options: options.Index().SetExpireAfterSeconds(1800),
-	},
-	)
+	indexes := []mongo.IndexModel{
+		mongo.IndexModel{
+			Keys:    bson.D{primitive.E{Key: "createdat", Value: 1}},
+			Options: options.Index().SetExpireAfterSeconds(1800),
+		},
+		mongo.IndexModel{
+			Keys:    bson.D{primitive.E{Key: "email", Value: ""}},
+			Options: options.Index().SetUnique(true),
+		},
+	}
+	// _, err := sessionCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{
+	// 	Keys:    bson.D{{"createdat", 1}},
+	// 	Options: options.Index().SetExpireAfterSeconds(1800),
+	// },
+	// )
+	_, err := sessionCollection.Indexes().CreateMany(context.TODO(), indexes)
 	if err != nil && !(strings.Contains(err.Error(), "IndexOptionsConflict")) {
 		panic(err.Error())
 	}
@@ -37,7 +49,7 @@ func (r *repository) SaveSession(session models.Session) error {
 
 func (r *repository) GetSessionByUserID(UserID string) (*models.Session, error) {
 	var dbsession = new(models.Session)
-	filter := bson.D{{"userid", UserID}}
+	filter := bson.D{primitive.E{Key: "userid", Value: UserID}}
 	err := r.sessionCollection.FindOne(context.TODO(), filter).Decode(&dbsession)
 	if err != nil {
 		gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
