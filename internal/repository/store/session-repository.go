@@ -37,6 +37,17 @@ func createSessionCollection(database *mongo.Database) *mongo.Collection {
 	return sessionCollection
 }
 
+func (r *repository) UpdateSession(session models.Session) error {
+	// _, err := r.sessionCollection.UpdateOne(context.TODO(), session)
+	_, err := r.sessionCollection.ReplaceOne(context.TODO(), session, session)
+	if err != nil {
+		gologger.ERROR("Repository: an error ocurred updating the session on the db")
+		return errors.New("error creating new session")
+	}
+	gologger.INFO("Repository: new session inserted")
+	return nil
+}
+
 func (r *repository) SaveSession(session models.Session) error {
 	_, err := r.sessionCollection.InsertOne(context.TODO(), session)
 	if err != nil {
