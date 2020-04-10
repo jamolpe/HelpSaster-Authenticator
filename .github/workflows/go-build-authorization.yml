@@ -1,4 +1,4 @@
-name: build-authorization-service
+name: build-go-sessioner
 on:
   push:
     branches:
