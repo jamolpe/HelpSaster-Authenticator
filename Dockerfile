@@ -9,8 +9,8 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o authorization-service ./cmd/...
+RUN go build -o go-sessioner ./cmd/...
 
 EXPOSE 8080
 
-CMD ["./authorization-service"]
+CMD ["./go-sessioner"]
