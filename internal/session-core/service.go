@@ -1,12 +1,10 @@
 package sessioncore
 
 import (
-	auth "authorization-service/internal/authorization"
-	"authorization-service/pkg/models"
+	auth "go-sessioner/internal/authorization"
+	"go-sessioner/pkg/models"
 
-	mgerror "authorization-service/pkg/errors"
-
-	gologger "github.com/jamolpe/go-logger"
+	mgerror "go-sessioner/pkg/errors"
 )
 
 // SessionInterface : session core service
@@ -29,7 +27,7 @@ func New(repo SessionRepository) SessionInterface {
 func (s *sessionService) GetSession(userID string) (*models.Session, error) {
 	session, err := s.repo.GetSessionByUserID(userID)
 	if err != nil {
-		gologger.ERROR("GetSession: error getting the session")
+		// gologger.ERROR("GetSession: error getting the session")
 		return nil, mgerror.NewError("error getting the data from database")
 	}
 	return session, nil
@@ -47,7 +45,7 @@ func (s *sessionService) SetSession(authUser *models.AuthUser) error {
 	s.modifyWithExistingSession(session)
 	err := s.repo.UpdateSession(*session)
 	if err != nil {
-		gologger.ERROR("SetSession: error setting the session on DB")
+		// gologger.ERROR("SetSession: error setting the session on DB")
 		return mgerror.NewError("error setting the session on the database")
 	}
 	return nil
@@ -62,7 +60,7 @@ func (s *sessionService) CheckValidSession(authUser *models.AuthUser) (bool, err
 	}
 	validation := auth.CheckTokenIsValid(authUser.Token)
 	if !validation.IsValid {
-		gologger.INFO("CheckSession: token not valid")
+		// gologger.INFO("CheckSession: token not valid")
 		return false, nil
 	}
 	if validation.IsValid {

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"authorization-service/pkg/models"
+	"go-sessioner/pkg/models"
 )
 
 func mapRegisterUserToModel(userToRegister *models.RegisterUser) *models.User {

@@ -1,12 +1,13 @@
 package store
 
 import (
-	"authorization-service/pkg/models"
 	"context"
 	"errors"
+	"go-sessioner/pkg/models"
+	"os"
 	"strings"
 
-	gologger "github.com/jamolpe/go-logger"
+	// gologger "github.com/jamolpe/// gologger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,7 +15,8 @@ import (
 )
 
 func createSessionCollection(database *mongo.Database) *mongo.Collection {
-	sessionCollection := database.Collection("Session")
+	sessionCollectionName := os.Getenv("SESSION_COLLECTION")
+	sessionCollection := database.Collection(sessionCollectionName)
 	indexes := []mongo.IndexModel{
 		mongo.IndexModel{
 			Keys:    bson.D{primitive.E{Key: "createdat", Value: 1}},
@@ -25,11 +27,6 @@ func createSessionCollection(database *mongo.Database) *mongo.Collection {
 			Options: options.Index().SetUnique(true),
 		},
 	}
-	// _, err := sessionCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{
-	// 	Keys:    bson.D{{"createdat", 1}},
-	// 	Options: options.Index().SetExpireAfterSeconds(1800),
-	// },
-	// )
 	_, err := sessionCollection.Indexes().CreateMany(context.TODO(), indexes)
 	if err != nil && !(strings.Contains(err.Error(), "IndexOptionsConflict")) {
 		panic(err.Error())
@@ -41,20 +38,20 @@ func (r *repository) UpdateSession(session models.Session) error {
 	// _, err := r.sessionCollection.UpdateOne(context.TODO(), session)
 	_, err := r.sessionCollection.ReplaceOne(context.TODO(), session, session)
 	if err != nil {
-		gologger.ERROR("Repository: an error ocurred updating the session on the db")
+		// gologger.ERROR("Repository: an error ocurred updating the session on the db")
 		return errors.New("error creating new session")
 	}
-	gologger.INFO("Repository: new session inserted")
+	// gologger.INFO("Repository: new session inserted")
 	return nil
 }
 
 func (r *repository) SaveSession(session models.Session) error {
 	_, err := r.sessionCollection.InsertOne(context.TODO(), session)
 	if err != nil {
-		gologger.ERROR("Repository: an error ocurred saving the session on the db")
+		// gologger.ERROR("Repository: an error ocurred saving the session on the db")
 		return errors.New("error creating new session")
 	}
-	gologger.INFO("Repository: new session inserted")
+	// gologger.INFO("Repository: new session inserted")
 	return nil
 }
 
@@ -63,7 +60,7 @@ func (r *repository) GetSessionByUserID(UserID string) (*models.Session, error) 
 	filter := bson.D{primitive.E{Key: "userid", Value: UserID}}
 	err := r.sessionCollection.FindOne(context.TODO(), filter).Decode(&dbsession)
 	if err != nil {
-		gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
+		// gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
 		return dbsession, err
 	}
 	return dbsession, nil

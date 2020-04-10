@@ -1,7 +1,7 @@
 package authorizationcore
 
 import (
-	"authorization-service/pkg/models"
+	"go-sessioner/pkg/models"
 )
 
 func (s *authService) findIfUserExist(user *models.User) bool {

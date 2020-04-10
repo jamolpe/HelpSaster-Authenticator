@@ -1,8 +1,8 @@
 package authorizationtest
 
 import (
-	auth "authorization-service/internal/authorization"
-	"authorization-service/pkg/models"
+	auth "go-sessioner/internal/authorization"
+	"go-sessioner/pkg/models"
 	"testing"
 )
 
@@ -38,6 +38,7 @@ func Test_Authorization_CorrectPassword(t *testing.T) {
 	loginUser := &models.User{Email: "email@email.com", Password: "samePassword"}
 
 	expectedResult := &models.AuthUser{User: user, Logged: true}
+	user.Password, _ = auth.SecureString(user.Password)
 	result, _ := auth.Authorization(user, loginUser)
 	if ok := compareSessionUser(expectedResult, result); !ok {
 		t.Error("wrong session user")

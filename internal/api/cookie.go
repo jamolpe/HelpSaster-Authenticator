@@ -1,7 +1,7 @@
 package api
 
 import (
-	"authorization-service/pkg/models"
+	"go-sessioner/pkg/models"
 	b64 "encoding/base64"
 	"encoding/json"
 	"net/http"

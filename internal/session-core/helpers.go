@@ -1,7 +1,7 @@
 package sessioncore
 
 import (
-	"authorization-service/pkg/models"
+	"go-sessioner/pkg/models"
 	"time"
 )
 

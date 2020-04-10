@@ -1,11 +1,9 @@
 package authorizationcore
 
 import (
-	auth "authorization-service/internal/authorization"
-	"authorization-service/pkg/models"
 	"errors"
-
-	gologger "github.com/jamolpe/go-logger"
+	auth "go-sessioner/internal/authorization"
+	"go-sessioner/pkg/models"
 )
 
 // AuthServiceInterface : authentication core service
@@ -27,13 +25,13 @@ func New(repo UserRepository) AuthServiceInterface {
 func (s *authService) UserRegister(user *models.User) (bool, error) {
 	exist := s.findIfUserExist(user)
 	if exist {
-		gologger.INFO("Register: user already exist")
+		//// gologger.INFO("Register: user already exist")
 		return false, errors.New("user already exist")
 	}
 	user.Password, _ = auth.SecureString(user.Password)
 	err := s.repo.SaveUser(*user)
 	if err != nil {
-		gologger.ERROR(`save new user error`)
+		//// gologger.ERROR(`save new user error`)
 		return false, err
 	}
 	return true, nil
@@ -44,18 +42,18 @@ func (s *authService) Authenticate(loginUser *models.User) (bool, *models.AuthUs
 	user := &models.User{Email: loginUser.Email}
 	dbUser := s.getUserFromDatabase(*user)
 	if *dbUser == (models.User{}) {
-		gologger.INFO("Authenticate: user not found")
+		//// gologger.INFO("Authenticate: user not found")
 		return false, nil, nil
 	}
 	sessionUser, err := auth.Authorization(dbUser, loginUser)
 	if err != nil {
-		gologger.ERROR("Authenticate: " + err.Error())
+		//// gologger.ERROR("Authenticate: " + err.Error())
 		return false, nil, err
 	}
 	if *sessionUser == (models.AuthUser{}) {
-		gologger.DEBUG("Authenticate: wrong password")
+		//// gologger.DEBUG("Authenticate: wrong password")
 		return false, sessionUser, nil
 	}
-	gologger.INFO("Authenticate: user authentified " + loginUser.Email)
+	//// gologger.INFO("Authenticate: user authentified " + loginUser.Email)
 	return true, sessionUser, nil
 }

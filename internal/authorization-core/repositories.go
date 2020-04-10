@@ -1,6 +1,6 @@
 package authorizationcore
 
-import "authorization-service/pkg/models"
+import "go-sessioner/pkg/models"
 
 // UserRepository : expected methods for user repository
 type UserRepository interface {

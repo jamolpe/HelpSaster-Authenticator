@@ -1,7 +1,7 @@
 package api
 
 import (
-	"authorization-service/pkg/models"
+	"go-sessioner/pkg/models"
 	"regexp"
 	"unicode"
 )

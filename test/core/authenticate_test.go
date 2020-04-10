@@ -1,8 +1,8 @@
 package coretest
 
 import (
-	authorizationcore "authorization-service/internal/authorization-core"
-	"authorization-service/pkg/models"
+	authorizationcore "go-sessioner/internal/authorization-core"
+	"go-sessioner/pkg/models"
 	"testing"
 )
 

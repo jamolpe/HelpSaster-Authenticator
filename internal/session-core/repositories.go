@@ -1,6 +1,6 @@
 package sessioncore
 
-import "authorization-service/pkg/models"
+import "go-sessioner/pkg/models"
 
 // SessionRepository : expected methods for session repository
 type SessionRepository interface {

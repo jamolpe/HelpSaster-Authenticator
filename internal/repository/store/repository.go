@@ -1,8 +1,10 @@
 package store
 
 import (
-	authorizationcore "authorization-service/internal/authorization-core"
-	sessioncore "authorization-service/internal/session-core"
+	authorizationcore "go-sessioner/internal/authorization-core"
+	sessioncore "go-sessioner/internal/session-core"
+
+	"github.com/jamolpe/gologger/pkg/models"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -12,6 +14,7 @@ type (
 	Repository interface {
 		authorizationcore.UserRepository
 		sessioncore.SessionRepository
+		models.Repository
 	}
 )
 
@@ -20,7 +23,8 @@ func New(client *mongo.Client) Repository {
 	database := client.Database("Clients")
 	userCollection := createUserCollection(database)
 	sessionCollection := createSessionCollection(database)
-	return &repository{client, database, userCollection, sessionCollection}
+	logCollection := createLogCollection(database)
+	return &repository{client, database, userCollection, sessionCollection, logCollection}
 }
 
 type repository struct {
@@ -28,4 +32,5 @@ type repository struct {
 	database          *mongo.Database
 	userCollection    *mongo.Collection
 	sessionCollection *mongo.Collection
+	logCollection     *mongo.Collection
 }

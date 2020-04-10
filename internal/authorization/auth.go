@@ -1,13 +1,13 @@
 package auth
 
 import (
-	mgerror "authorization-service/pkg/errors"
+	mgerror "go-sessioner/pkg/errors"
 	"time"
 
-	gologger "github.com/jamolpe/go-logger"
+	// gologger "github.com/jamolpe/// gologger"
 	"golang.org/x/crypto/bcrypt"
 
-	"authorization-service/pkg/models"
+	"go-sessioner/pkg/models"
 	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
@@ -55,10 +55,10 @@ func CheckTokenIsValid(tokenString string) ValidationResult {
 			fmt.Println("That's not even a token")
 			return ValidationResult{IsValid: false, Expired: false, Error: true}
 		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-			gologger.ERROR("TokenValidation: token expired")
+			// gologger.ERROR("TokenValidation: token expired")
 			return ValidationResult{IsValid: false, Expired: true, Error: false}
 		} else {
-			gologger.ERROR("TokenValidation: couldn't handle this token:" + err.Error())
+			// gologger.ERROR("TokenValidation: couldn't handle this token:" + err.Error())
 			return ValidationResult{IsValid: false, Expired: false, Error: true}
 		}
 	}
