@@ -25,7 +25,7 @@ func main() {
 	repo := store.New(client)
 	middlewares := middlewares.ConfigureMiddlewares(repo)
 	authsrv := authorizationcore.New(repo, middlewares.Logger)
-	sessionsrv := sessioncore.New(repo)
+	sessionsrv := sessioncore.New(repo, middlewares.Logger)
 	handler := api.New(authsrv, sessionsrv)
 	handler.Router()
 }
