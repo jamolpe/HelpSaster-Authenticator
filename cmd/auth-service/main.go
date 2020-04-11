@@ -24,7 +24,7 @@ func main() {
 	client := database.ConfigureAndConnect()
 	repo := store.New(client)
 	middlewares := middlewares.ConfigureMiddlewares(repo)
-	authsrv := authorizationcore.New(repo)
+	authsrv := authorizationcore.New(repo, middlewares.Logger)
 	sessionsrv := sessioncore.New(repo)
 	handler := api.New(authsrv, sessionsrv)
 	handler.Router()
