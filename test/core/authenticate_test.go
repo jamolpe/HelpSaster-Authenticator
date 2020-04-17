@@ -9,7 +9,8 @@ import (
 func Test_Authenticate_NotExistingUser(t *testing.T) {
 	loginUser := &models.User{Email: "user@user.com", Password: "password"}
 	repo := NewRepository(nil, models.User{}, nil)
-	srv := authorizationcore.New(repo)
+	logger := NewLogger()
+	srv := authorizationcore.New(repo, logger)
 
 	result, session, err := srv.Authenticate(loginUser)
 	if result != false {
