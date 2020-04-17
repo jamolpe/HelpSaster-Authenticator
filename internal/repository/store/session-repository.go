@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"errors"
+	"fmt"
 	"go-sessioner/pkg/models"
 	"os"
 	"strings"
@@ -23,7 +24,7 @@ func createSessionCollection(database *mongo.Database) *mongo.Collection {
 			Options: options.Index().SetExpireAfterSeconds(1800),
 		},
 		mongo.IndexModel{
-			Keys:    bson.D{primitive.E{Key: "email", Value: ""}},
+			Keys:    bson.D{primitive.E{Key: "email", Value: 1}},
 			Options: options.Index().SetUnique(true),
 		},
 	}
@@ -38,9 +39,11 @@ func (r *repository) UpdateSession(session models.Session) error {
 	// _, err := r.sessionCollection.UpdateOne(context.TODO(), session)
 	_, err := r.sessionCollection.ReplaceOne(context.TODO(), session, session)
 	if err != nil {
+		fmt.Println("ERROR: Repository: an error ocurred updating the session on the db")
 		// gologger.ERROR("Repository: an error ocurred updating the session on the db")
 		return errors.New("error creating new session")
 	}
+	fmt.Println("INFO: Repository: new session inserted")
 	// gologger.INFO("Repository: new session inserted")
 	return nil
 }
@@ -48,9 +51,11 @@ func (r *repository) UpdateSession(session models.Session) error {
 func (r *repository) SaveSession(session models.Session) error {
 	_, err := r.sessionCollection.InsertOne(context.TODO(), session)
 	if err != nil {
+		fmt.Println("ERROR: Repository: an error ocurred saving the session on the db")
 		// gologger.ERROR("Repository: an error ocurred saving the session on the db")
 		return errors.New("error creating new session")
 	}
+	fmt.Println("INFO: Repository: new session inserted")
 	// gologger.INFO("Repository: new session inserted")
 	return nil
 }
@@ -60,6 +65,7 @@ func (r *repository) GetSessionByUserID(UserID string) (*models.Session, error) 
 	filter := bson.D{primitive.E{Key: "userid", Value: UserID}}
 	err := r.sessionCollection.FindOne(context.TODO(), filter).Decode(&dbsession)
 	if err != nil {
+		fmt.Println("ERROR: Repository: an error ocurred getting the user " + err.Error())
 		// gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
 		return dbsession, err
 	}

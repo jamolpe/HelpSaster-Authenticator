@@ -1,9 +1,10 @@
 package store
 
 import (
-	"go-sessioner/pkg/models"
 	"context"
 	"errors"
+	"fmt"
+	"go-sessioner/pkg/models"
 	"os"
 	"strings"
 
@@ -20,7 +21,7 @@ func createUserCollection(database *mongo.Database) *mongo.Collection {
 	userCollection := database.Collection(userCollectionName)
 	indexes := []mongo.IndexModel{
 		mongo.IndexModel{
-			Keys:    bson.D{primitive.E{Key: "email", Value: ""}},
+			Keys:    bson.D{primitive.E{Key: "email", Value: 1}},
 			Options: options.Index().SetUnique(true),
 		},
 	}
@@ -34,9 +35,11 @@ func createUserCollection(database *mongo.Database) *mongo.Collection {
 func (r repository) SaveUser(user models.User) error {
 	_, err := r.userCollection.InsertOne(context.TODO(), user)
 	if err != nil {
+		fmt.Println("ERROR: Repository: an error ocurred saving new user on the db")
 		// gologger.ERROR("Repository: an error ocurred saving new user on the db")
 		return errors.New("error creating new user")
 	}
+	fmt.Println("INFO: Repository: new user inserted")
 	// gologger.INFO("Repository: new user inserted")
 	return nil
 }
@@ -46,6 +49,7 @@ func (r repository) GetUserByEmail(user models.User) (models.User, error) {
 	filter := bson.D{primitive.E{Key: "email", Value: user.Email}}
 	err := r.userCollection.FindOne(context.TODO(), filter).Decode(&dbUser)
 	if err != nil {
+		fmt.Println("ERROR: an error ocurred getting the user " + err.Error())
 		// gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
 		return dbUser, err
 	}
