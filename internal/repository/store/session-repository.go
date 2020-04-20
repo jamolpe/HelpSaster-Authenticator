@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go-sessioner/pkg/models"
 	"os"
+	"strconv"
 	"strings"
 
 	// gologger "github.com/jamolpe/// gologger"
@@ -18,10 +19,13 @@ import (
 func createSessionCollection(database *mongo.Database) *mongo.Collection {
 	sessionCollectionName := os.Getenv("SESSION_COLLECTION")
 	sessionCollection := database.Collection(sessionCollectionName)
+	var expiration int32
+	exp, _ := strconv.Atoi(os.Getenv("SESSION_EXPIRATION_TIME"))
+	expiration = int32(exp) | 1800
 	indexes := []mongo.IndexModel{
 		mongo.IndexModel{
 			Keys:    bson.D{primitive.E{Key: "createdat", Value: 1}},
-			Options: options.Index().SetExpireAfterSeconds(1800),
+			Options: options.Index().SetExpireAfterSeconds(expiration),
 		},
 		mongo.IndexModel{
 			Keys:    bson.D{primitive.E{Key: "email", Value: 1}},
