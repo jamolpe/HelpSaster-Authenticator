@@ -6,6 +6,7 @@ A simple microservice to register and login users with session managment.
 
 This microservice follows the most common golang microservice structure:
 
+```bash
 .
 +--.github
 | +--...
@@ -41,6 +42,7 @@ This microservice follows the most common golang microservice structure:
 +--go.mod
 +--go.sum
 +--README.md
+```
 
 ## Env-Variables
 
@@ -52,3 +54,7 @@ This microservice follows the most common golang microservice structure:
 | USERS_COLLECTION   | database collection for users    | Users                     |
 | LOG_COLLECTION     | database collection for logs     | logs                      |
 | LOG_LEVEL          | log level for the logger library | DEV                       |
+
+```
+
+```
