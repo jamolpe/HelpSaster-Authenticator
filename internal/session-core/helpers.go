@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func mapSessionFromAuthUser(authUser *models.AuthUser) *models.Session {
+func mapSessionFromAuthUser(authUser models.AuthUser) *models.Session {
 	session := new(models.Session)
 	session.Token = authUser.Token
 	session.UserID = authUser.User.Email

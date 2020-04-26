@@ -12,8 +12,8 @@ import (
 // SessionInterface : session core service
 type SessionInterface interface {
 	GetSession(userID string) (*models.Session, error)
-	SetSession(authUser *models.AuthUser) error
-	CheckValidSession(authUser *models.AuthUser) (bool, error)
+	SetSession(authUser models.AuthUser) error
+	CheckValidSession(authUser models.AuthUser) bool
 }
 
 type sessionService struct {
@@ -43,7 +43,7 @@ func (s *sessionService) modifyWithExistingSession(session *models.Session) {
 	}
 }
 
-func (s *sessionService) SetSession(authUser *models.AuthUser) error {
+func (s *sessionService) SetSession(authUser models.AuthUser) error {
 	session := mapSessionFromAuthUser(authUser)
 	s.modifyWithExistingSession(session)
 	err := s.repo.UpdateSession(*session)
@@ -55,19 +55,19 @@ func (s *sessionService) SetSession(authUser *models.AuthUser) error {
 }
 
 // CheckValidSession : checks if the session is valid if so we refresh the token
-func (s *sessionService) CheckValidSession(authUser *models.AuthUser) (bool, error) {
+func (s *sessionService) CheckValidSession(authUser models.AuthUser) bool {
 	session := mapSessionFromAuthUser(authUser)
 	session, _ = s.GetSession(session.UserID)
 	if session == nil {
-		return false, nil
+		return false
 	}
 	validation := auth.CheckTokenIsValid(authUser.Token)
 	if !validation.IsValid {
 		s.logger.INFO("CheckSession: token not valid")
-		return false, nil
+		return false
 	}
 	if validation.IsValid {
-		return true, nil
+		return true
 	}
-	return true, nil
+	return true
 }
