@@ -16,16 +16,15 @@ type (
 	}
 	// User : user model
 	User struct {
-		Email    string `bson:"email"`
-		Name     string `bson:"name"`
+		Email    string `json:"Email" bson:"email"`
+		Name     string `json:"Name" bson:"name"`
 		Password string `json:"-" bson:"password"`
-		Age      uint8  `bson:"age"`
+		Age      uint8  `json:"Age" bson:"age"`
 	}
 
 	// AuthUser : user info login response
 	AuthUser struct {
-		Logged bool   `json:"Logged"`
-		User   *User  `json:"User"`
-		Token  string `json:"Token"`
+		Logged bool  `json:"Logged"`
+		User   *User `json:"User"`
 	}
 )
