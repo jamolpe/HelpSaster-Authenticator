@@ -6,14 +6,16 @@ import (
 
 	mgerror "go-sessioner/pkg/errors"
 
+	guuid "github.com/google/uuid"
+
 	"github.com/jamolpe/gologger"
 )
 
 // SessionInterface : session core service
 type SessionInterface interface {
-	GetSession(userID string) (*models.Session, error)
-	SetSession(authUser models.AuthUser) error
-	CheckValidSession(authUser models.AuthUser) bool
+	GetSession(ID guuid.UUID) (*models.Session, error)
+	SetSession(session models.Session) error
+	CheckValidSession(session models.Session) bool
 }
 
 type sessionService struct {
@@ -27,8 +29,8 @@ func New(repo SessionRepository, logger gologger.LoggerI) SessionInterface {
 }
 
 // GetSession - get and returns the session
-func (s *sessionService) GetSession(userID string) (*models.Session, error) {
-	session, err := s.repo.GetSessionByUserID(userID)
+func (s *sessionService) GetSession(sessionID guuid.UUID) (*models.Session, error) {
+	session, err := s.repo.GetSessionByID(sessionID.String())
 	if err != nil {
 		s.logger.ERROR("GetSession: error getting the session")
 		return nil, mgerror.NewError("error getting the data from database")
@@ -36,17 +38,23 @@ func (s *sessionService) GetSession(userID string) (*models.Session, error) {
 	return session, nil
 }
 
-func (s *sessionService) modifyWithExistingSession(session *models.Session) {
-	existingSession, _ := s.GetSession(session.UserID)
+func (s *sessionService) modifyWithExistingSession(session *models.Session) bool {
+	existingSession, _ := s.GetSession(session.ID)
 	if existingSession != nil {
 		session = existingSession
+		return true
 	}
+	return false
 }
 
-func (s *sessionService) SetSession(authUser models.AuthUser) error {
-	session := mapSessionFromAuthUser(authUser)
-	s.modifyWithExistingSession(session)
-	err := s.repo.UpdateSession(*session)
+func (s *sessionService) SetSession(session models.Session) error {
+	modified := s.modifyWithExistingSession(&session)
+	var err error
+	if modified {
+		err = s.repo.UpdateSession(session)
+	} else {
+		err = s.repo.SaveSession(session)
+	}
 	if err != nil {
 		s.logger.ERROR("SetSession: error setting the session on DB")
 		return mgerror.NewError("error setting the session on the database")
@@ -55,13 +63,8 @@ func (s *sessionService) SetSession(authUser models.AuthUser) error {
 }
 
 // CheckValidSession : checks if the session is valid if so we refresh the token
-func (s *sessionService) CheckValidSession(authUser models.AuthUser) bool {
-	session := mapSessionFromAuthUser(authUser)
-	session, _ = s.GetSession(session.UserID)
-	if session == nil {
-		return false
-	}
-	validation := auth.CheckTokenIsValid(authUser.Token)
+func (s *sessionService) CheckValidSession(session models.Session) bool {
+	validation := auth.CheckTokenIsValid(session.Token)
 	if !validation.IsValid {
 		s.logger.INFO("CheckSession: token not valid")
 		return false
@@ -69,5 +72,5 @@ func (s *sessionService) CheckValidSession(authUser models.AuthUser) bool {
 	if validation.IsValid {
 		return true
 	}
-	return true
+	return false
 }

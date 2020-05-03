@@ -32,17 +32,18 @@ func (api *API) Authenticate(c echo.Context) error {
 			return c.JSON(500, models.ErrorResponse{Code: 005, Message: message})
 		}
 		user := mapLoginUserToModel(userToLogin)
-		authenticated, authUser, err := api.authSrv.Authenticate(user)
+		authenticated, authUser, token, err := api.authSrv.Authenticate(user)
 		if err == nil && !authenticated {
 			return c.JSON(422, models.ErrorResponse{Code: 06, Message: "login incorrect"})
 		}
-		if err == nil && authenticated {
-			sessionCookie, cookieerr := createCookie(*authUser)
+		if err == nil && authenticated && token != "" {
+			session := mapAuthUserToSession(*authUser, token)
+			sessionCookie, cookieerr := createCookie(session)
 			if cookieerr != nil {
 				return c.JSON(500, models.ErrorResponse{Code: 005, Message: "error creating cookie"})
 			}
 			if os.Getenv("GO_ENV") != "test" {
-				go api.sessionSrv.SetSession(*authUser)
+				go api.sessionSrv.SetSession(session)
 			}
 			c.SetCookie(sessionCookie)
 			return c.JSON(200, models.Authresponse{Message: "user authorized", LogedUser: *authUser})
