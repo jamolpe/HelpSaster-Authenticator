@@ -47,7 +47,7 @@ func (r *repository) UpdateSession(session models.Session) error {
 		// gologger.ERROR("Repository: an error ocurred updating the session on the db")
 		return errors.New("error creating new session")
 	}
-	fmt.Println("INFO: Repository: new session inserted")
+	fmt.Println("INFO: Repository: session updated")
 	// gologger.INFO("Repository: new session inserted")
 	return nil
 }
@@ -67,6 +67,18 @@ func (r *repository) SaveSession(session models.Session) error {
 func (r *repository) GetSessionByUserID(UserID string) (*models.Session, error) {
 	var dbsession = new(models.Session)
 	filter := bson.D{primitive.E{Key: "userid", Value: UserID}}
+	err := r.sessionCollection.FindOne(context.TODO(), filter).Decode(&dbsession)
+	if err != nil {
+		fmt.Println("ERROR: Repository: an error ocurred getting the user " + err.Error())
+		// gologger.ERROR("Repository: an error ocurred getting the user " + err.Error())
+		return dbsession, err
+	}
+	return dbsession, nil
+}
+
+func (r *repository) GetSessionByID(ID string) (*models.Session, error) {
+	var dbsession = new(models.Session)
+	filter := bson.D{primitive.E{Key: "id", Value: ID}}
 	err := r.sessionCollection.FindOne(context.TODO(), filter).Decode(&dbsession)
 	if err != nil {
 		fmt.Println("ERROR: Repository: an error ocurred getting the user " + err.Error())

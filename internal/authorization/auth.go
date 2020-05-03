@@ -2,13 +2,15 @@ package auth
 
 import (
 	mgerror "go-sessioner/pkg/errors"
+	"os"
+	"strconv"
 	"time"
 
 	// gologger "github.com/jamolpe/// gologger"
 	"golang.org/x/crypto/bcrypt"
 
-	"go-sessioner/pkg/models"
 	"fmt"
+	"go-sessioner/pkg/models"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -20,22 +22,48 @@ type (
 		Expired bool
 		Error   bool
 	}
+	Claims struct {
+		Email string `json:"email"`
+		jwt.StandardClaims
+	}
 )
 
-func createUserToken(email string) (string, error) {
-	mySigningKey := []byte("mytopSecret")
+var mySigningKey = []byte("mytopSecret")
 
+func GetEmailFromToken(tokenString string) (string, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return mySigningKey, nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if !token.Valid {
+		return "", mgerror.NewError("Token not valid")
+	}
+	return claims.Email, nil
+}
+
+func createUserToken(email string) (string, error) {
 	createdAtInt := int64(time.Second)
+	var err error
+	var tokenTime int64
+	tokenTime, err = strconv.ParseInt(os.Getenv("SESSION_EXPIRATION_TIME"), 10, 64)
+	expiresAt := time.Now().Add(time.Duration(tokenTime) * time.Second)
 	// Create the Claims
-	claims := &jwt.StandardClaims{
-		ExpiresAt: 15000,
-		Subject:   email,
-		Issuer:    "gosessioner",
-		IssuedAt:  createdAtInt,
+	claims := &Claims{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expiresAt.Unix(),
+			Subject:   email,
+			Issuer:    "gosessioner",
+			IssuedAt:  createdAtInt,
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString(mySigningKey)
+	var ss string
+	ss, err = token.SignedString(mySigningKey)
 	if err != nil {
 		return "", mgerror.NewError("authorization error")
 	}
@@ -44,8 +72,9 @@ func createUserToken(email string) (string, error) {
 
 // CheckTokenIsValid checks if the token is valid
 func CheckTokenIsValid(tokenString string) ValidationResult {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte("mytopSecret"), nil
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return mySigningKey, nil
 	})
 
 	if token.Valid {
@@ -78,14 +107,13 @@ func CheckCorrespondingString(password, hash string) bool {
 }
 
 // Authorization : check if the user is authoriced
-func Authorization(dbUser *models.User, requestedUser *models.User) (*models.AuthUser, error) {
+func Authorization(dbUser *models.User, requestedUser *models.User) (*models.AuthUser, string, error) {
 	logerUser := &models.AuthUser{}
 	if CheckCorrespondingString(requestedUser.Password, dbUser.Password) {
 		token, err := createUserToken(dbUser.Email)
 		logerUser.User = dbUser
 		logerUser.Logged = true
-		logerUser.Token = token
-		return logerUser, err
+		return logerUser, token, err
 	}
-	return logerUser, nil
+	return logerUser, "", nil
 }

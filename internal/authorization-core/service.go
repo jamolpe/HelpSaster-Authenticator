@@ -11,7 +11,7 @@ import (
 // AuthServiceInterface : authentication core service
 type AuthServiceInterface interface {
 	UserRegister(user *models.User) (bool, error)
-	Authenticate(loginUserData *models.User) (bool, *models.AuthUser, error)
+	Authenticate(loginUserData *models.User) (bool, *models.AuthUser, string, error)
 }
 
 type authService struct {
@@ -41,22 +41,22 @@ func (s *authService) UserRegister(user *models.User) (bool, error) {
 }
 
 // Authenticate : authenticate the user and give a token
-func (s *authService) Authenticate(loginUser *models.User) (bool, *models.AuthUser, error) {
+func (s *authService) Authenticate(loginUser *models.User) (bool, *models.AuthUser, string, error) {
 	user := &models.User{Email: loginUser.Email}
 	dbUser := s.getUserFromDatabase(*user)
 	if *dbUser == (models.User{}) {
 		s.logger.INFO("Authenticate: user not found")
-		return false, nil, nil
+		return false, nil, "", nil
 	}
-	sessionUser, err := auth.Authorization(dbUser, loginUser)
+	authoricedUser, token, err := auth.Authorization(dbUser, loginUser)
 	if err != nil {
 		s.logger.ERROR("Authenticate: " + err.Error())
-		return false, nil, err
+		return false, nil, "", err
 	}
-	if *sessionUser == (models.AuthUser{}) {
+	if *authoricedUser == (models.AuthUser{}) {
 		s.logger.DEBUG("Authenticate: wrong password")
-		return false, sessionUser, nil
+		return false, authoricedUser, "", nil
 	}
 	s.logger.INFO("Authenticate: user authentified " + loginUser.Email)
-	return true, sessionUser, nil
+	return true, authoricedUser, token, nil
 }

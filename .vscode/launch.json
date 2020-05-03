@@ -11,7 +11,7 @@
       "mode": "remote",
       "remotePath": "${workspaceFolder}",
       "port": 8080,
-      "host": "127.0.0.1"
+      "host": "localhost"
     },
 
     {
@@ -20,7 +20,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/cmd/auth-service",
-      "port": 8090
+      "port": 8080
     }
   ]
 }
