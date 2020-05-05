@@ -12,7 +12,7 @@ func Test_Authenticate_NotExistingUser(t *testing.T) {
 	logger := NewLogger()
 	srv := authorizationcore.New(repo, logger)
 
-	result, session, err := srv.Authenticate(loginUser)
+	result, session, _, err := srv.Authenticate(loginUser)
 	if result != false {
 		t.Error("fail user authenticated")
 	}
