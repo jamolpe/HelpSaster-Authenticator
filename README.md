@@ -2,7 +2,23 @@
 
 A simple microservice to register and login users with session managment.
 
+## Tech
+
+-Docker
+-GithubActions
+-Postman
+
+External libraries:
+
+Logger library(also developed by me) -> https://github.com/jamolpe/gologger
+GoMod
+
+Inside the docs folder you can find a .json postman request template
+
 ## Structure
+
+This proyect follows a DDD architecture aproach to allow easier functional testing.
+For more information you can check the followed article I used to start a DDD aproach https://dev.to/stevensunflash/using-domain-driven-design-ddd-in-golang-3ee5
 
 This microservice follows the most common golang microservice structure:
 
@@ -55,6 +71,6 @@ This microservice follows the most common golang microservice structure:
 | LOG_COLLECTION     | database collection for logs     | logs                      |
 | LOG_LEVEL          | log level for the logger library | DEV                       |
 
-```
+## Testing
 
-```
+This library has test focused on functional testing (to be improved)
